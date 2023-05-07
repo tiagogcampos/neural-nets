@@ -11,11 +11,8 @@ void run_forward() {
   Layer *third = create_layer(1, 1);
 
   size_t number_of_layers = 3;
-  Layer **layers = malloc(sizeof(Layer *) * number_of_layers);
-
-  layers[0] = first;
-  layers[1] = second;
-  layers[2] = third;
+  
+  Layer* layers[] = { first, second, third };
 
   Sequential *sequential = create_sequential_layers(layers, number_of_layers);
 
