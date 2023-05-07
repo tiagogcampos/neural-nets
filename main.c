@@ -5,6 +5,39 @@
 #include "sequential.h"
 
 
+void run_forward() {
+  Layer *first = create_layer(5, 3);
+  Layer *second = create_layer(3, 1);
+  Layer *third = create_layer(1, 1);
+
+  size_t number_of_layers = 3;
+  Layer **layers = malloc(sizeof(Layer *) * number_of_layers);
+
+  layers[0] = first;
+  layers[1] = second;
+  layers[2] = third;
+
+  Sequential *sequential = create_sequential_layers(layers, number_of_layers);
+
+  size_t input_shape = 5;
+  double *inputs = malloc(sizeof(double) * input_shape);
+
+  double** forward = forward_sequential(sequential, inputs);
+  for(size_t i = 0; i < sequential->number_of_layers; i++) {
+    for(size_t j = 0; j < sequential->layers[i]->input_shape; j++) {
+      printf("%f ", forward[i][j]);
+    }
+    printf("\n");
+  }
+
+  for(size_t i = 0; i < number_of_layers; i++) {
+    free(forward[i]);
+  }
+
+  free(forward);
+  free_sequential(sequential);
+}
+
 
 void run_with_sequential_layers() {
   Layer *test_layer = create_layer(100, 50);
@@ -12,11 +45,12 @@ void run_with_sequential_layers() {
 
   size_t number_of_layers = 2;
   Layer **layers = malloc(sizeof(Layer *) * number_of_layers);
-  layers[0] = test_layer; layers[1] = next;
+  layers[0] = test_layer;
+  layers[1] = next;
 
-  Sequential *seq = create_sequential_layers(layers);
+  Sequential *seq = create_sequential_layers(layers, number_of_layers);
 
-  for (size_t i = 0; i < 2; i++) {
+  for (size_t i = 0; i < number_of_layers; i++) {
     printf("Layer at %zu\n", i);
     printf("input_shape: %zu\n", seq->layers[i]->input_shape);
     printf("output_shape: %zu\n", seq->layers[i]->output_shape);
@@ -57,6 +91,7 @@ void simple_layer() {
 }
 
 int main() {
-  test_neuron_weights_and_biases();
+  // test_neuron_weights_and_biases();
+  run_forward();
   return 0;
 }
