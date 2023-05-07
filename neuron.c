@@ -5,6 +5,7 @@
 
 Neuron *create_neuron(size_t input_size) {
   Neuron *neuron = malloc(sizeof(Neuron));
+  neuron->weights_size = input_size;
   neuron->weights = generate_weights(input_size);
   neuron->bias = (double)rand() / RAND_MAX;
 
@@ -34,3 +35,12 @@ double *generate_weights(size_t size) {
 double *get_weights(Neuron *neuron) { return neuron->weights; }
 
 double get_bias(Neuron *neuron) { return neuron->bias; }
+
+double forward(Neuron *neuron, double *inputs) {
+  double sum = 0;
+  for(size_t i = 0; i < neuron->weights_size; i++) {
+    sum += inputs[i] * neuron->weights[i];
+  } 
+
+  return sum + neuron->bias; 
+}
