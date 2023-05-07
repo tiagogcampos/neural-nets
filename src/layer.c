@@ -5,7 +5,19 @@
 
 Layer *create_layer(size_t input_shape, size_t output_shape) {
   Layer *layer = malloc(sizeof(Layer));
+  
+  if(layer == NULL) {
+    fprintf(stderr, "ERROR: could not allocate layer due: %m\n");
+    exit(EXIT_FAILURE);
+  }
+
   layer->neurons = malloc(sizeof(Neuron *) * input_shape);
+  
+  if(layer->neurons == NULL) {
+    fprintf(stderr, "ERROR: could not allocate neurons due: %m\n");
+    exit(EXIT_FAILURE);
+  }
+
   layer->input_shape = input_shape;
   layer->output_shape = output_shape;
 
@@ -19,6 +31,12 @@ Layer *create_layer(size_t input_shape, size_t output_shape) {
 
 double *forward_layer(Layer *layer, double *inputs) {
   double *forward_pass = malloc(sizeof(double) * layer->input_shape);
+  
+  if(forward_pass == NULL) {
+    fprintf(stderr, "ERROR: could not allocate memory to foward_layer due: %m\n");
+    exit(EXIT_FAILURE);
+  }
+
   for(size_t i = 0; i < layer->input_shape; i++) {
     forward_pass[i] = forward(layer->neurons[i], inputs);
   }
