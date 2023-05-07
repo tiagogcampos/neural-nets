@@ -10,10 +10,9 @@ void run_forward() {
   Layer *second = create_layer(3, 1);
   Layer *third = create_layer(1, 1);
 
-  size_t number_of_layers = 3;
-  
   Layer* layers[] = { first, second, third };
 
+  size_t number_of_layers = 3;
   Sequential *sequential = create_sequential_layers(layers, number_of_layers);
 
   size_t input_shape = 5;
