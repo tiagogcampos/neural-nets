@@ -17,11 +17,13 @@ Layer *create_layer(size_t input_shape, size_t output_shape) {
   return layer;
 }
 
-void forward_layer(Layer *layer, double *inputs, size_t shape) {
-  double *forward_pass = malloc(sizeof(double) * shape);
+double *forward_layer(Layer *layer, double *inputs) {
+  double *forward_pass = malloc(sizeof(double) * layer->input_shape);
   for(size_t i = 0; i < layer->input_shape; i++) {
     forward_pass[i] = forward(layer->neurons[i], inputs);
   }
+
+  return forward_pass;
 }
 
 size_t get_input_shape(Layer *layer) { return layer->input_shape; }

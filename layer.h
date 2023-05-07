@@ -15,7 +15,7 @@ typedef struct {
 Layer* create_layer(size_t input_shape, size_t output_shape);
 
 
-void forward_layer(Layer *layer, double *inputs, size_t shape);
+double *forward_layer(Layer *layer, double *inputs);
 
 size_t get_input_shape(Layer *layer);
 size_t get_output_shape(Layer *layer);
