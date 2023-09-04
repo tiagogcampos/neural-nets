@@ -1,21 +1,21 @@
+#include "layer.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "layer.h"
 
 Layer *create_layer(size_t input_shape, size_t output_shape) {
-  Layer *layer = malloc(sizeof(Layer));
-  
-  if(layer == NULL) {
+  Layer *layer = calloc(1, sizeof(Layer));
+
+  if (layer == NULL) {
     fprintf(stderr, "ERROR: could not allocate layer due: %m\n");
-    exit(EXIT_FAILURE);
+    return NULL;
   }
 
-  layer->neurons = malloc(sizeof(Neuron *) * input_shape);
-  
-  if(layer->neurons == NULL) {
+  layer->neurons = calloc(input_shape, sizeof(Neuron *));
+
+  if (layer->neurons == NULL) {
     fprintf(stderr, "ERROR: could not allocate neurons due: %m\n");
-    exit(EXIT_FAILURE);
+    return NULL;
   }
 
   layer->input_shape = input_shape;
@@ -23,6 +23,9 @@ Layer *create_layer(size_t input_shape, size_t output_shape) {
 
   for (size_t i = 0; i < input_shape; i++) {
     Neuron *neuron = create_neuron(input_shape);
+    if (neuron == NULL) {
+      return NULL;
+    }
     layer->neurons[i] = neuron;
   }
 
@@ -30,14 +33,16 @@ Layer *create_layer(size_t input_shape, size_t output_shape) {
 }
 
 double *forward_layer(Layer *layer, double *inputs) {
-  double *forward_pass = malloc(sizeof(double) * layer->input_shape);
-  
-  if(forward_pass == NULL) {
-    fprintf(stderr, "ERROR: could not allocate memory to foward_layer due: %m\n");
+  double *forward_pass = calloc(layer->input_shape, sizeof(double));
+
+  if (forward_pass == NULL) {
+    fprintf(stderr,
+            "ERROR: could not allocate memory to foward_layer due: %m\n");
+    remove_layer(layer);
     exit(EXIT_FAILURE);
   }
 
-  for(size_t i = 0; i < layer->input_shape; i++) {
+  for (size_t i = 0; i < layer->input_shape; i++) {
     forward_pass[i] = forward(layer->neurons[i], inputs);
   }
 

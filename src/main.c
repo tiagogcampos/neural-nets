@@ -4,43 +4,65 @@
 #include "layer.h"
 #include "sequential.h"
 
+void cleanup_layers(Layer **layers, size_t number_of_layers) {
+  for (size_t i = 0; i < number_of_layers; i++) {
+    remove_layer(layers[i]);
+  }
+}
 
 void run_forward() {
   Layer *first = create_layer(5, 3);
   Layer *second = create_layer(3, 1);
   Layer *third = create_layer(1, 1);
 
-  Layer* layers[] = { first, second, third };
-
   size_t number_of_layers = 3;
+  Layer *layers[] = {first, second, third};
+
+  if (first == NULL || second == NULL || third == NULL) {
+    cleanup_layers(layers, number_of_layers);
+    return;
+  }
+
   Sequential *sequential = create_sequential_layers(layers, number_of_layers);
 
-  size_t input_shape = 5;
-  double *inputs = malloc(sizeof(double) * input_shape);
+  if (sequential == NULL) {
+    cleanup_layers(layers, number_of_layers);
+    free_sequential(sequential);
+  }
 
-  double** forward = forward_sequential(sequential, inputs);
-  for(size_t i = 0; i < sequential->number_of_layers; i++) {
-    for(size_t j = 0; j < sequential->layers[i]->input_shape; j++) {
+  size_t input_shape = 5;
+  double *inputs = calloc(input_shape, sizeof(double));
+
+  double **forward = forward_sequential(sequential, inputs);
+
+  if (forward == NULL) {
+    free_sequential(sequential);
+    free(inputs);
+    free(forward);
+  }
+
+  for (size_t i = 0; i < sequential->number_of_layers; i++) {
+    for (size_t j = 0; j < sequential->layers[i]->input_shape; j++) {
       printf("%f ", forward[i][j]);
     }
     printf("\n");
   }
 
-  for(size_t i = 0; i < number_of_layers; i++) {
+  for (size_t i = 0; i < number_of_layers; i++) {
     free(forward[i]);
   }
 
+  free(inputs);
   free(forward);
   free_sequential(sequential);
 }
-
 
 void run_with_sequential_layers() {
   Layer *test_layer = create_layer(100, 50);
   Layer *next = create_layer(50, 10);
 
   size_t number_of_layers = 2;
-  Layer **layers = malloc(sizeof(Layer *) * number_of_layers);
+  Layer **layers = calloc(number_of_layers, sizeof(Layer *));
   layers[0] = test_layer;
   layers[1] = next;
 
@@ -87,7 +109,6 @@ void simple_layer() {
 }
 
 int main() {
-  // test_neuron_weights_and_biases();
   run_forward();
   return 0;
 }
